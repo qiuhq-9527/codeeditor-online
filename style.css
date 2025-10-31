@@ -214,8 +214,11 @@ body {
                 .output-content {
                     width: 100%;
                     height: 100%;
-                    padding: 0.75rem;
+                    max-width: 100rem;
+                    max-height: 40.5rem;
                     overflow-y: auto;
+                    overflow-x: auto;
+                    padding: 0.75rem;
                     font-family: "Monaco", "Courier New", monospace;
                     font-size: 0.875rem;
                     line-height: 1.5;
@@ -225,6 +228,7 @@ body {
                     border-radius: 0.5rem;
                     color: var(--text-primary);
                     background-color: var(--bg-tertiary);
+                    
 
                     &.empty {
                         display: flex;
