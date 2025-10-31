@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/less@4.2.0/dist/less.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.2/ace.min.js"></script>
     <style>
       :root {
-        --bg-primary: #f8f9fa;
+        --bg-primary: #e9e9e9;
         --bg-secondary: #ffffff;
-        --bg-tertiary: #e2e2e2;
+        --bg-tertiary: #fcfcfc;
         --text-primary: #212529;
         --text-secondary: #6c757d;
         --border-color: #dee2e6;
@@ -17,9 +18,9 @@
       }
 
       [data-theme="dark"] {
-        --bg-primary: #121212;
+        --bg-primary: #393939;
         --bg-secondary: #1e1e1e;
-        --bg-tertiary: #2d2d2d;
+        --bg-tertiary: #1d1d1d;
         --text-primary: #e9ecef;
         --text-secondary: #adb5bd;
         --border-color: #444444;
@@ -84,6 +85,37 @@
         .theme-option {
           cursor: pointer;
         }
+      }
+
+      .ace-editor-container {
+        height: 100%;
+        width: 100%;
+      }
+
+      .ace_editor {
+        background-color: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+      }
+
+      .ace_gutter {
+        background-color: var(--bg-tertiary) !important;
+        color: var(--text-secondary) !important;
+      }
+
+      .ace_gutter-cell {
+        color: var(--text-secondary) !important;
+      }
+
+      .ace_cursor {
+        color: var(--text-primary) !important;
+      }
+
+      .ace_selection {
+        background-color: rgba(0, 0, 0, 0.15) !important;
+      }
+
+      [data-theme="dark"] .ace_selection {
+        background-color: rgba(255, 255, 255, 0.15) !important;
       }
     </style>
   </head>
@@ -161,6 +193,73 @@
     // 初始化
     document.addEventListener("DOMContentLoaded", () => {
       new ThemeManager();
+    });
+  </script>
+
+  <script>
+    /**
+     * Ace编辑器管理
+     */
+    class CodeEditor {
+      constructor() {
+        this.container = document.querySelector(".content-code");
+        this.editor = null;
+        this.init();
+        this.setupThemeSync();
+      }
+
+      init() {
+        const editorDiv = document.createElement("div");
+        editorDiv.className = "ace-editor-container";
+        this.container.appendChild(editorDiv);
+
+        this.editor = ace.edit(editorDiv);
+        this.editor.setTheme("ace/theme/chrome");
+        this.editor.session.setMode("ace/mode/c_cpp");
+        this.editor.setOptions({
+          enableBasicAutocompletion: true,
+          enableLiveAutocompletion: true,
+          enableSnippets: true,
+          fontSize: 14,
+          fontFamily: "Monaco, Courier New, monospace",
+          showLineNumbers: true,
+          showGutter: true,
+        });
+
+        const initialCode = `#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello, World!" << endl;
+    return 0;
+}`;
+
+        this.editor.setValue(initialCode);
+        this.editor.clearSelection();
+      }
+
+      setupThemeSync() {
+        const observer = new MutationObserver(() => {
+          this.updateEditorTheme();
+        });
+
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["data-theme"],
+        });
+      }
+
+      updateEditorTheme() {
+        if (!this.editor) return;
+
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        const theme = isDark ? "ace/theme/tomorrow_night" : "ace/theme/chrome";
+        this.editor.setTheme(theme);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      new CodeEditor();
     });
   </script>
 </html>
