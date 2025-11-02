@@ -144,8 +144,6 @@
 
       this.minWidth = 12; // rem
       this.minHeight = 12; // rem
-      this.throttleDelay = 16; // ms
-      this.lastTime = 0;
 
       this.codeWidth = 56;
       this.dataWidth = 44;
@@ -164,14 +162,6 @@
       this.output.style.height = this.outputHeight + '%';
     }
 
-    throttle(fn) {
-      const now = Date.now();
-      if (now - this.lastTime >= this.throttleDelay) {
-        this.lastTime = now;
-        fn();
-      }
-    }
-
     dragX(e) {
       e.preventDefault();
       const container = document.querySelector('.content');
@@ -182,17 +172,15 @@
       const minW = this.minWidth * 16; 
 
       const move = (ev) => {
-        this.throttle(() => {
-          const delta = ev.clientX - startX;
-          const newCodeW = startCodeW + delta;
-          const newDataW = startDataW - delta;
+        const delta = ev.clientX - startX;
+        const newCodeW = startCodeW + delta;
+        const newDataW = startDataW - delta;
 
-          if (newCodeW < minW || newDataW < minW) return;
+        if (newCodeW < minW || newDataW < minW) return;
 
-          this.codeWidth = (newCodeW / totalW) * 100;
-          this.dataWidth = (newDataW / totalW) * 100;
-          this.applyLayout();
-        });
+        this.codeWidth = (newCodeW / totalW) * 100;
+        this.dataWidth = (newDataW / totalW) * 100;
+        this.applyLayout();
       };
 
       const end = () => {
@@ -213,17 +201,15 @@
       const minH = this.minHeight * 16; 
 
       const move = (ev) => {
-        this.throttle(() => {
-          const delta = ev.clientY - startY;
-          const newInputH = startInputH + delta;
-          const newOutputH = startOutputH - delta;
+        const delta = ev.clientY - startY;
+        const newInputH = startInputH + delta;
+        const newOutputH = startOutputH - delta;
 
-          if (newInputH < minH || newOutputH < minH) return;
+        if (newInputH < minH || newOutputH < minH) return;
 
-          this.inputHeight = (newInputH / totalH) * 100;
-          this.outputHeight = (newOutputH / totalH) * 100;
-          this.applyLayout();
-        });
+        this.inputHeight = (newInputH / totalH) * 100;
+        this.outputHeight = (newOutputH / totalH) * 100;
+        this.applyLayout();
       };
 
       const end = () => {
