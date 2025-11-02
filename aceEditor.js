@@ -3,6 +3,14 @@ class CodeEditor {
   constructor() {
     this.container = document.querySelector(".content-code");
     this.editor = null;
+    this.themes = {
+      light: ["chrome", "github", "solarized_light", "twilight"],
+      dark: ["dracula", "monokai", "solarized_dark", "tomorrow_night"],
+    };
+    this.currentThemeIndex = {
+      light: 2, // github
+      dark: 2,  // dracula
+    };
     this.init();
     this.setupThemeSync();
   }
@@ -16,7 +24,7 @@ class CodeEditor {
     ace.require("ace/ext/language_tools");
 
     this.editor.setTheme("ace/theme/chrome");
-    this.editor.session.setMode("ace/mode/c_cpp");
+    this.editor.session.setMode("ace/mode/javascript");
     this.editor.setOptions({
       enableBasicAutocompletion: true,
       enableLiveAutocompletion: true,
@@ -27,13 +35,8 @@ class CodeEditor {
       showGutter: true,
     });
 
-    const initialCode = `#include <iostream>
-using namespace std;
-
-int main() {
-    cout << "Hello, World!" << endl;
-    return 0;
-}`;
+    const initialCode = `// ES2015-ES2024 JavaScript
+console.log("Hello, World!");`;
 
     this.editor.setValue(initialCode);
     this.editor.clearSelection();
@@ -54,8 +57,20 @@ int main() {
     if (!this.editor) return;
 
     const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-    const theme = isDark ? "ace/theme/tomorrow_night" : "ace/theme/chrome";
+    const mode = isDark ? "dark" : "light";
+    const themeList = this.themes[mode];
+    const themeIndex = this.currentThemeIndex[mode];
+    const themeName = themeList[themeIndex];
+    const theme = `ace/theme/${themeName}`;
     this.editor.setTheme(theme);
+  }
+
+  cycleTheme() {
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    const mode = isDark ? "dark" : "light";
+    const themeList = this.themes[mode];
+    this.currentThemeIndex[mode] = (this.currentThemeIndex[mode] + 1) % themeList.length;
+    this.updateEditorTheme();
   }
 }
 
