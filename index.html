@@ -156,10 +156,10 @@
     }
 
     applyLayout() {
-      this.code.style.width = this.codeWidth + '%';
-      this.data.style.width = this.dataWidth + '%';
-      this.input.style.height = this.inputHeight + '%';
-      this.output.style.height = this.outputHeight + '%';
+      this.code.style.flexBasis = this.codeWidth + '%';
+      this.data.style.flexBasis = this.dataWidth + '%';
+      this.input.style.flexBasis = this.inputHeight + '%';
+      this.output.style.flexBasis = this.outputHeight + '%';
     }
 
     dragX(e) {
