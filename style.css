@@ -105,7 +105,6 @@ body {
     .content {
         display: flex;
         flex-direction: row;
-        gap: 0.5rem;
         width: 100%;
         height: 100%;
 
@@ -114,17 +113,15 @@ body {
         } */
 
         .content-data {
-            flex: 4;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
 
             .content-input {
-                flex: 1;
                 display: flex;
                 flex-direction: column;
                 background: var(--bg-secondary);
                 border-radius: 0.75rem;
+                overflow: hidden;
 
                 .input-title {
                     padding: 0 1rem;
@@ -150,14 +147,13 @@ body {
                 .input-form {
                     display: flex;
                     flex-direction: column;
-                    /* flex: 1; */
-                    gap: 0.5rem;
+                    flex: 1;
                     padding: 0.5rem;
 
                     .content-input-textarea {
                         background-color: var(--bg-tertiary);
                         width: 100%;
-                        height: 9rem;
+                        flex: 1;
                         border-radius: 0.5rem;
                         border: 1px solid var(--border-color);
                         padding: 0.75rem;
@@ -165,6 +161,7 @@ body {
                         font-family: inherit;
                         color: var(--text-primary);
                         outline: none;
+                        margin-bottom: 0.5rem;
 
                         &::-webkit-scrollbar {
                             width: 0.5rem;
@@ -208,11 +205,11 @@ body {
             }
 
             .content-output {
-                flex: 3;
                 display: flex;
                 flex-direction: column;
                 background: var(--bg-secondary);
                 border-radius: 0.75rem;
+                overflow: hidden;
 
                 .output-title {
                     padding: 0 1rem;
@@ -237,15 +234,15 @@ body {
 
                 .output-content-container {
                     width: 100%;
-                    height: 100%;
+                    flex: 1;
                     padding: 0.5rem;
+                    display: flex;
+                    flex-direction: column;
                 }
 
                 .output-content {
                     width: 100%;
-                    height: 100%;
-                    max-width: 100rem;
-                    max-height: 40.5rem;
+                    flex: 1;
                     overflow-y: auto;
                     overflow-x: auto;
                     padding: 0.75rem;
@@ -287,12 +284,11 @@ body {
 
 
 .content-code {
-    flex: 5;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
     border-radius: 0.75rem;
     background-color: var(--bg-secondary);
+    overflow: hidden;
 
     .code-title {
         padding: 0 1rem;
@@ -319,6 +315,7 @@ body {
         flex: 1;
         width: 100%;
         border-radius: 0 0 0.75rem 0.75rem;
+        overflow: hidden;
     }
 
     .ace_editor {
@@ -431,6 +428,59 @@ body {
             &:hover {
                 background-color: rgba(255, 255, 255, 0.3);
             }
+        }
+    }
+}
+
+/* 分割线样式 */
+.divider {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    background-color: transparent;
+
+    &.divider-x {
+        width: 10px;
+        height: 100%;
+        cursor: col-resize;
+        flex-shrink: 0;
+
+        &::before {
+            content: '';
+            width: 2px;
+            height: 20px;
+            background-color: rgb(199, 199, 199);
+            border-radius: 1px;
+            transition: all 0.2s ease;
+        }
+
+        &:hover::before {
+            background-color: rgba(32,184,52,0.7);
+            width: 3px;
+            height: 100%;
+        }
+    }
+
+    &.divider-y {
+        height: 10px;
+        width: 100%;
+        cursor: row-resize;
+        flex-shrink: 0;
+
+        &::before {
+            content: '';
+            width: 20px;
+            height: 2px;
+            background-color: rgb(199, 199, 199);
+            border-radius: 1px;
+            transition: all 0.2s ease;
+        }
+
+        &:hover::before {
+            background-color: rgba(32,184,52,0.7);
+            width: 100%;
+            height: 3px;
         }
     }
 }

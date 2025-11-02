@@ -17,7 +17,7 @@
   <div class="container">
 
     <div class="title">
-      <div>LonAC Coding Editor</div>
+      <div>CodeEdit-Online</div>
       <div class="theme-switcher">
         <div class="theme-option" data-theme="light" title="浅色主题"></div>
         <div class="theme-option" data-theme="dark" title="深色主题"></div>
@@ -33,6 +33,9 @@
         </div>
       </div>
 
+      <div class="divider divider-x" id="dividerX"></div>
+
+      <!-- 数据区 -->
       <div class="content-data">
         <!-- 数据输入区 -->
         <div class="content-input">
@@ -47,7 +50,10 @@
             </button>
           </form>
         </div>
-        <!-- 编译或执行结果区 -->
+
+        <div class="divider divider-y" id="dividerY"></div>
+
+        <!-- 运行结果区 -->
         <div class="content-output">
           <div class="output-title">
             <span>输出</span>
@@ -65,7 +71,9 @@
 </body>
 
 <script>
-  // 主题管理
+  /**
+   * @description 主题切换管理
+   */
   class ThemeManager {
     constructor() {
       this.currentTheme = localStorage.getItem("theme") || "auto";
@@ -121,6 +129,117 @@
   });
 </script>
 
+<script>
+  /**
+   * @description 布局调整管理
+   */
+  class ResizeManager {
+    constructor() {
+      this.code = document.querySelector('.content-code');
+      this.data = document.querySelector('.content-data');
+      this.input = document.querySelector('.content-input');
+      this.output = document.querySelector('.content-output');
+      this.dividerX = document.getElementById('dividerX');
+      this.dividerY = document.getElementById('dividerY');
+
+      this.minWidth = 12; // rem
+      this.minHeight = 12; // rem
+      this.throttleDelay = 16; // ms
+      this.lastTime = 0;
+
+      this.codeWidth = 56;
+      this.dataWidth = 44;
+      this.inputHeight = 25;
+      this.outputHeight = 75;
+
+      this.applyLayout();
+      this.dividerX.addEventListener('mousedown', (e) => this.dragX(e));
+      this.dividerY.addEventListener('mousedown', (e) => this.dragY(e));
+    }
+
+    applyLayout() {
+      this.code.style.width = this.codeWidth + '%';
+      this.data.style.width = this.dataWidth + '%';
+      this.input.style.height = this.inputHeight + '%';
+      this.output.style.height = this.outputHeight + '%';
+    }
+
+    throttle(fn) {
+      const now = Date.now();
+      if (now - this.lastTime >= this.throttleDelay) {
+        this.lastTime = now;
+        fn();
+      }
+    }
+
+    dragX(e) {
+      e.preventDefault();
+      const container = document.querySelector('.content');
+      const startX = e.clientX;
+      const startCodeW = this.code.offsetWidth;
+      const startDataW = this.data.offsetWidth;
+      const totalW = container.offsetWidth;
+      const minW = this.minWidth * 16; 
+
+      const move = (ev) => {
+        this.throttle(() => {
+          const delta = ev.clientX - startX;
+          const newCodeW = startCodeW + delta;
+          const newDataW = startDataW - delta;
+
+          if (newCodeW < minW || newDataW < minW) return;
+
+          this.codeWidth = (newCodeW / totalW) * 100;
+          this.dataWidth = (newDataW / totalW) * 100;
+          this.applyLayout();
+        });
+      };
+
+      const end = () => {
+        window.removeEventListener('mousemove', move);
+        window.removeEventListener('mouseup', end);
+      };
+
+      window.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', end);
+    }
+
+    dragY(e) {
+      e.preventDefault();
+      const startY = e.clientY;
+      const startInputH = this.input.offsetHeight;
+      const startOutputH = this.output.offsetHeight;
+      const totalH = this.data.offsetHeight;
+      const minH = this.minHeight * 16; 
+
+      const move = (ev) => {
+        this.throttle(() => {
+          const delta = ev.clientY - startY;
+          const newInputH = startInputH + delta;
+          const newOutputH = startOutputH - delta;
+
+          if (newInputH < minH || newOutputH < minH) return;
+
+          this.inputHeight = (newInputH / totalH) * 100;
+          this.outputHeight = (newOutputH / totalH) * 100;
+          this.applyLayout();
+        });
+      };
+
+      const end = () => {
+        window.removeEventListener('mousemove', move);
+        window.removeEventListener('mouseup', end);
+      };
+
+      window.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', end);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    new ResizeManager();
+  });
+</script>
 
 
 </html>
