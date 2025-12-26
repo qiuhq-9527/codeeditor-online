@@ -1,6 +1,6 @@
 /**
  * 代码运行管理（节流5秒）
- * 后续在此文件集成真实的代码逻辑和输出
+ * 已集成 Piston API 用于执行 JavaScript 代码
  */
 class InputFormManager {
   constructor() {
@@ -55,17 +55,39 @@ class InputFormManager {
   /**
    * 代码运行回调（待实现）
    */
-  onSubmit(code, inputData) {
-    console.log("代码:", code);// 可删
-    console.log("输入数据:", inputData);// 可删
-
+  async onSubmit(code, inputData) {
     this.setRunning();
 
-    // 可删
-    setTimeout(() => {
-      const testOutput = `测试文本\n测试文本:\nHello, Test!\n\n输入数据:\n${inputData || "(无)"}`;
-      this.setOutput(testOutput);
-    }, 1500);
+    try {
+      const response = await fetch("https://emkc.org/api/v2/piston/execute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          language: "javascript",
+          version: "18.15.0",
+          files: [
+            {
+              content: code,
+            },
+          ],
+          stdin: inputData || "",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.run) {
+        const output = data.run.output || "运行成功，无输出内容";
+        this.setOutput(output);
+      } else {
+        this.setOutput("运行失败：无法获取执行结果。");
+      }
+    } catch (error) {
+      console.error("执行出错:", error);
+      this.setOutput("网络错误或服务不可用，请稍后再试。");
+    }
   }
 }
 
