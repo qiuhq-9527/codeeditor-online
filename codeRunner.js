@@ -59,6 +59,10 @@ class InputFormManager {
     this.setRunning();
 
     try {
+      // 处理输入数据：作为 stdin 传入，同时尝试拆分为 args 以支持命令行参数
+      const cleanInput = (inputData || "").trim();
+      const args = cleanInput ? cleanInput.split(/\s+/) : [];
+
       const response = await fetch("https://emkc.org/api/v2/piston/execute", {
         method: "POST",
         headers: {
@@ -69,18 +73,26 @@ class InputFormManager {
           version: "18.15.0",
           files: [
             {
+              name: "index.js",
               content: code,
             },
           ],
           stdin: inputData || "",
+          args: args,
         }),
       });
 
       const data = await response.json();
 
       if (data.run) {
-        const output = data.run.output || "运行成功，无输出内容";
-        this.setOutput(output);
+        const output = data.run.output.trim();
+        if (output) {
+          this.setOutput(output);
+        } else if (data.run.code !== 0) {
+          this.setOutput(`程序异常退出 (代码: ${data.run.code})`);
+        } else {
+          this.setOutput("程序运行结束，无输出内容");
+        }
       } else {
         this.setOutput("运行失败：无法获取执行结果。");
       }
